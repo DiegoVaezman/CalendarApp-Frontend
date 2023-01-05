@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from './reduxToolkit';
 import calendarApi from '../api/calendarApi';
-import { clearErrorMessage, onChecking, onLogin, onLogout } from '../store';
+import { clearErrorMessage, onChecking, onLogin, onLogout, onLogoutCalendar } from '../store';
 import { AuthSuccessResponse, RenewTokenResponse } from '../interfaces/interfaces';
 import { useEffect } from 'react';
 import Swal from 'sweetalert2';
@@ -17,7 +17,7 @@ export const useAuthStore = () => {
             const {data}: {data: AuthSuccessResponse} = await calendarApi.post('/auth', {email, password});
             localStorage.setItem('token', data.token);
             localStorage.setItem('token-init-date', String(new Date().getTime()));
-            dispatch(onLogin({uid: data.uid, name: data.name}));
+            dispatch(onLogin({_id: data._id, name: data.name}));
         } catch (error) {
             dispatch(onLogout('Credenciales incorrectas'));
             setTimeout(() => {
@@ -32,7 +32,7 @@ export const useAuthStore = () => {
             const {data}: {data: AuthSuccessResponse} = await calendarApi.post('/auth/new', {name, email,  password});
             localStorage.setItem('token', data.token);
             localStorage.setItem('token-init-date', String(new Date().getTime()));
-            dispatch(onLogin({uid: data.uid, name: data.name}));
+            dispatch(onLogin({_id: data._id, name: data.name}));
         } catch (error) {
             dispatch(onLogout(error.response.data?.msg || Object.values<any>(error.response.data.errors)[0].msg || 'Unexpected error'));
             setTimeout(() => {
@@ -49,7 +49,7 @@ export const useAuthStore = () => {
             const {data}: {data: RenewTokenResponse} = await calendarApi.get('/auth/renew');
             localStorage.setItem('token', data.token);
             localStorage.setItem('token-init-date', String(new Date().getTime()));
-            dispatch(onLogin({uid: data.uid, name: data.name}));
+            dispatch(onLogin({_id: data._id, name: data.name}));
         } catch (error) {
             localStorage.clear();
             dispatch(onLogout(null))
@@ -59,6 +59,7 @@ export const useAuthStore = () => {
     const startLogout = () => {
         localStorage.clear();
         dispatch(onLogout(null));
+        dispatch(onLogoutCalendar());
     };
 
      useEffect(() => {

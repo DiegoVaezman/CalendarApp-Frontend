@@ -30,6 +30,7 @@ export const formInitState: Partial<EventType> = {
     notes: '',
     start: new Date(),
     end: addHours(new Date(), 1),
+    bgColor: '#fafafa',
 };
 
 export const CalendarModal = () => {

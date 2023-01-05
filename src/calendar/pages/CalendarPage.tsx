@@ -10,11 +10,19 @@ import {
 } from '../';
 import { localizer, getMessagesES } from '../../helpers';
 import { EventType } from '../../interfaces/interfaces';
-import { useState, useCallback } from 'react';
-import { useUiStore } from '../../hooks';
+import { useState, useCallback, useEffect } from 'react';
+import { useAuthStore, useUiStore } from '../../hooks';
 import { useCalendarStore } from '../../hooks/useCalendarStore';
 
 export const CalendarPage = () => {
+    const { openDateModal } = useUiStore();
+    const { user } = useAuthStore();
+    const { events, startLoadingEvents, setActiveEvent, activeEvent } =
+        useCalendarStore();
+    const [lastView, setLastView] = useState<View>(
+        (localStorage.getItem('lastView') as View) || 'week'
+    );
+
     const eventStyleGetter: EventPropGetter<EventType> = (
         event,
         start,
@@ -22,20 +30,16 @@ export const CalendarPage = () => {
         isSelected
     ) => {
         const style: React.CSSProperties = {
-            backgroundColor: '#347CF7',
+            backgroundColor:
+                event.user._id === user?._id ? '#347CF7' : '#465660',
             borderRadius: '0px',
             opacity: isSelected ? 1 : 0.75,
             color: 'white',
             paddingLeft: isSelected ? 0 : 5,
-            borderLeft: isSelected ? '5px solid purple' : '',
+            borderLeft: isSelected ? '5px solid red' : '',
         };
         return { style };
     };
-    const { openDateModal } = useUiStore();
-    const { events, setActiveEvent, activeEvent } = useCalendarStore();
-    const [lastView, setLastView] = useState<View>(
-        (localStorage.getItem('lastView') as View) || 'week'
-    );
 
     const onDoubleClick = (event: EventType) => {
         openDateModal();
@@ -49,6 +53,10 @@ export const CalendarPage = () => {
         localStorage.setItem('lastView', event);
         setLastView(event);
     };
+
+    useEffect(() => {
+        startLoadingEvents();
+    }, []);
 
     return (
         <>

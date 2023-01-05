@@ -12,23 +12,38 @@ export interface EventType extends Omit<Event, 'title'>  {
 }
 
 export interface User {
-    uid: string;
+    _id: string;
     name: string;
 }
 
 export interface AuthSuccessResponse {
     ok: boolean;
-    uid: string;
+    _id: string;
     name: string;
     token: string;
+}
+
+export interface GetNotesResponse {
+    ok: boolean;
+    events: NoteResponse[]
+}
+
+export interface NoteResponse extends Omit<EventType, 'start' | 'end'>{
+    start: string;
+    end: string;
 }
 
 
 export interface RenewTokenResponse {
     ok: boolean;
-    uid: string;
+    _id: string;
     name: string;
     token: string;
+}
+
+export interface CreateNoteResponse {
+    ok: boolean;
+    event: EventType;
 }
 
 
