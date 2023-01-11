@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useUiStore } from '../../hooks';
 import { useCalendarStore } from '../../hooks/useCalendarStore';
 import { EventType } from '../../interfaces/interfaces';
+import { getEnvVariables } from '../../helpers/getEnvVariables';
 
 registerLocale('es', es);
 
@@ -23,7 +24,9 @@ const customStyles = {
     },
 };
 
-Modal.setAppElement('#root');
+if (getEnvVariables().VITE_MODE !== 'test') {
+    Modal.setAppElement('#root');
+}
 
 export const formInitState: Partial<EventType> = {
     title: '',
